@@ -47,6 +47,7 @@ import {
 import Header from "@/components/custom/header";
 import { formatNumber, translateType } from "../utils/common";
 import LineBetween from "@/components/custom/line-between";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const FormSchema = z.object({
   contract: z.string({
@@ -202,226 +203,246 @@ export default function ClientElectric() {
           <>
             <div className="grid gap-4 md:gap-8 md:grid-cols-[1fr_1fr]">
               <div className="grid gap-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      Tổng tiêu thụ trong tháng này
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-4">
-                      {!(perdictCurrent.consume <= 0) && (
-                        <>
-                          <div className="grid gap-1">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Điện năng tiêu thụ
-                            </p>
-                            <p className="text-2xl font-semibold">
-                              {formatNumber(perdictCurrent.consume)} kWh
-                            </p>
-                          </div>
-                          <LineBetween />
-                        </>
-                      )}
-                      {!(perdictCurrent.normal <= 0) && (
-                        <>
-                          <div className="grid gap-1">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Giờ bình thường
-                            </p>
-                            <p className="text-2xl font-semibold">
-                              {formatNumber(perdictCurrent.normal)} kWh
-                            </p>
-                          </div>
-                          <LineBetween />
-                        </>
-                      )}
-                      {!(perdictCurrent.low <= 0) && (
-                        <>
-                          <div className="grid gap-1">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Giờ thấp điểm
-                            </p>
-                            <p className="text-2xl font-semibold">
-                              {formatNumber(perdictCurrent.low)} kWh
-                            </p>
-                          </div>
-                          <LineBetween />
-                        </>
-                      )}
-                      {!(perdictCurrent.high <= 0) && (
-                        <>
-                          <div className="grid gap-1">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Giờ cao điểm
-                            </p>
-                            <p className="text-2xl font-semibold">
-                              {formatNumber(perdictCurrent.high)} kWh
-                            </p>
-                          </div>
-                          <LineBetween />
-                        </>
-                      )}
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Tiền điện chưa thuế
-                        </p>
-                        <p className="text-2xl font-semibold">
-                          {formatNumber(perdictCurrent.cost)} VNĐ
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="text-lg">
-                      Thông tin hợp đồng
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center gap-4">
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Loại hợp đồng
-                        </p>
-                        <p className="text-lg font-semibold">
-                          {translateType(infoContract.type)}
-                        </p>
-                      </div>
-                      <LineBetween />
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Điện áp
-                        </p>
-                        <p className="text-lg font-semibold">
-                          {translateType(infoContract.volt)}
-                        </p>
-                      </div>
-                      <LineBetween />
-                      {infoContract.houses > 0 && (
-                        <>
-                          <div className="grid gap-1">
-                            <p className="text-sm text-gray-500 dark:text-gray-400">
-                              Số hộ
-                            </p>
-                            <p className="text-lg font-semibold">
-                              {infoContract.houses}
-                            </p>
-                          </div>
-                          <LineBetween />
-                        </>
-                      )}
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Trạng thái
-                        </p>
-                        <p className="text-lg font-semibold">
-                          {translateType(infoContract.status)}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 my-2">
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Địa chỉ
-                        </p>
-                        <p className="text-lg font-semibold">
-                          {infoContract.address}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 my-2">
-                      <div className="grid gap-1">
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          Bên cung cấp
-                        </p>
-                        <p className="text-lg font-semibold">
-                          {infoContract.text}
-                        </p>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              </div>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    Điện năng tiêu thụ trong 7 ngày gần nhất
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <BarChart
-                    className="w-full aspect-[2/1]"
-                    data={records7DaysBefore}
-                  />
-                </CardContent>
-              </Card>
-            </div>
-            <div className="grid gap-4 md:gap-8 md:grid-cols-[1fr_1fr]">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    Chỉ số công tơ trong tháng
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="overflow-auto max-h-[400px]">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Ngày</TableHead>
-                        {infoContract.type === "FAMILY" && (
-                          <TableHead>Điện năng tiêu thụ (kWh)</TableHead>
-                        )}
-                        {infoContract.type !== "FAMILY" && (
-                          <TableHead>Giờ bình thường (kWh)</TableHead>
-                        )}
-                        {(infoContract.type === "PRODUCE" ||
-                          infoContract.type === "BUSINESS") && (
-                          <>
-                            <TableHead>Giờ thấp điểm (kWh)</TableHead>
-                            <TableHead>Giờ cao điểm (kWh)</TableHead>
-                          </>
-                        )}
-                      </TableRow>
-                    </TableHeader>
-                    {records.map((record) => (
-                      <TableBody key={record.time}>
-                        <TableRow>
-                          <TableCell>{record.time}</TableCell>
-                          {infoContract.type === "FAMILY" && (
-                            <TableCell>{record.consume}</TableCell>
-                          )}
-                          {infoContract.type !== "FAMILY" && (
-                            <TableCell>{record.normal}</TableCell>
-                          )}
-                          {(infoContract.type === "PRODUCE" ||
-                            infoContract.type === "BUSINESS") && (
+                <Tabs defaultValue="predict" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="predict">Dự tính</TabsTrigger>
+                    <TabsTrigger value="activity">Chỉ số công tơ</TabsTrigger>
+                    <TabsTrigger value="contract">Hợp đồng</TabsTrigger>
+                  </TabsList>
+                  <TabsContent value="predict">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">
+                          Tổng tiêu thụ trong tháng này
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-4">
+                          {!(perdictCurrent.consume <= 0) && (
                             <>
-                              <TableCell>{record.low}</TableCell>
-                              <TableCell>{record.high}</TableCell>
+                              <div className="grid gap-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Điện năng tiêu thụ
+                                </p>
+                                <p className="text-2xl font-semibold">
+                                  {formatNumber(perdictCurrent.consume)} kWh
+                                </p>
+                              </div>
+                              <LineBetween />
                             </>
                           )}
-                        </TableRow>
-                      </TableBody>
-                    ))}
-                  </Table>
-                </CardContent>
-              </Card>
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-lg">
-                    Điện năng tiêu thụ trong 6 tháng gần nhất
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <BarChart
-                    className="w-full aspect-[2/1]"
-                    data={total6Months}
-                  />
-                </CardContent>
-              </Card>
+                          {!(perdictCurrent.normal <= 0) && (
+                            <>
+                              <div className="grid gap-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Giờ bình thường
+                                </p>
+                                <p className="text-2xl font-semibold">
+                                  {formatNumber(perdictCurrent.normal)} kWh
+                                </p>
+                              </div>
+                              <LineBetween />
+                            </>
+                          )}
+                          {!(perdictCurrent.low <= 0) && (
+                            <>
+                              <div className="grid gap-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Giờ thấp điểm
+                                </p>
+                                <p className="text-2xl font-semibold">
+                                  {formatNumber(perdictCurrent.low)} kWh
+                                </p>
+                              </div>
+                              <LineBetween />
+                            </>
+                          )}
+                          {!(perdictCurrent.high <= 0) && (
+                            <>
+                              <div className="grid gap-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Giờ cao điểm
+                                </p>
+                                <p className="text-2xl font-semibold">
+                                  {formatNumber(perdictCurrent.high)} kWh
+                                </p>
+                              </div>
+                              <LineBetween />
+                            </>
+                          )}
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Tiền điện chưa thuế
+                            </p>
+                            <p className="text-2xl font-semibold">
+                              {formatNumber(perdictCurrent.cost)} VNĐ
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="activity">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">
+                          Chỉ số công tơ trong tháng
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="overflow-auto max-h-[400px]">
+                        <Table>
+                          <TableHeader>
+                            <TableRow>
+                              <TableHead>Ngày</TableHead>
+                              {infoContract.type === "FAMILY" && (
+                                <TableHead>Điện năng tiêu thụ (kWh)</TableHead>
+                              )}
+                              {infoContract.type !== "FAMILY" && (
+                                <TableHead>Giờ bình thường (kWh)</TableHead>
+                              )}
+                              {(infoContract.type === "PRODUCE" ||
+                                infoContract.type === "BUSINESS") && (
+                                <>
+                                  <TableHead>Giờ thấp điểm (kWh)</TableHead>
+                                  <TableHead>Giờ cao điểm (kWh)</TableHead>
+                                </>
+                              )}
+                            </TableRow>
+                          </TableHeader>
+                          {records.map((record) => (
+                            <TableBody key={record.time}>
+                              <TableRow>
+                                <TableCell>{record.time}</TableCell>
+                                {infoContract.type === "FAMILY" && (
+                                  <TableCell>{record.consume}</TableCell>
+                                )}
+                                {infoContract.type !== "FAMILY" && (
+                                  <TableCell>{record.normal}</TableCell>
+                                )}
+                                {(infoContract.type === "PRODUCE" ||
+                                  infoContract.type === "BUSINESS") && (
+                                  <>
+                                    <TableCell>{record.low}</TableCell>
+                                    <TableCell>{record.high}</TableCell>
+                                  </>
+                                )}
+                              </TableRow>
+                            </TableBody>
+                          ))}
+                        </Table>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                  <TabsContent value="contract">
+                    <Card>
+                      <CardHeader>
+                        <CardTitle className="text-lg">
+                          Thông tin hợp đồng
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center gap-4">
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Loại hợp đồng
+                            </p>
+                            <p className="text-lg font-semibold">
+                              {translateType(infoContract.type)}
+                            </p>
+                          </div>
+                          <LineBetween />
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Điện áp
+                            </p>
+                            <p className="text-lg font-semibold">
+                              {translateType(infoContract.volt)}
+                            </p>
+                          </div>
+                          <LineBetween />
+                          {infoContract.houses > 0 && (
+                            <>
+                              <div className="grid gap-1">
+                                <p className="text-sm text-gray-500 dark:text-gray-400">
+                                  Số hộ
+                                </p>
+                                <p className="text-lg font-semibold">
+                                  {infoContract.houses}
+                                </p>
+                              </div>
+                              <LineBetween />
+                            </>
+                          )}
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Trạng thái
+                            </p>
+                            <p className="text-lg font-semibold">
+                              {translateType(infoContract.status)}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4 my-2">
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Địa chỉ
+                            </p>
+                            <p className="text-lg font-semibold">
+                              {infoContract.address}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-4 my-2">
+                          <div className="grid gap-1">
+                            <p className="text-sm text-gray-500 dark:text-gray-400">
+                              Bên cung cấp
+                            </p>
+                            <p className="text-lg font-semibold">
+                              {infoContract.text}
+                            </p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </TabsContent>
+                </Tabs>
+              </div>
+              <Tabs defaultValue="7days" className="w-full">
+                <TabsList>
+                  <TabsTrigger value="7days">7 ngày gần nhất</TabsTrigger>
+                  <TabsTrigger value="6months">6 tháng gần nhất</TabsTrigger>
+                </TabsList>
+                <TabsContent value="7days">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">
+                        Điện năng tiêu thụ trong 7 ngày gần nhất
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <BarChart
+                        className="w-full aspect-[2/1]"
+                        data={records7DaysBefore}
+                      />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+                <TabsContent value="6months">
+                  <Card>
+                    <CardHeader>
+                      <CardTitle className="text-lg">
+                        Điện năng tiêu thụ trong 6 tháng gần nhất
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <BarChart
+                        className="w-full aspect-[2/1]"
+                        data={total6Months}
+                      />
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+              </Tabs>
             </div>
           </>
         )}

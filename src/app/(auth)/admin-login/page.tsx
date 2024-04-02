@@ -38,7 +38,7 @@ export default function AdminLogin() {
   async function onSubmit(values: z.infer<typeof LoginBody>) {
     const response = await loginAdmin(values);
     if (response.data.code === 200) {
-      localStorage.setItem("responseAdmin", response.data.data);
+      localStorage.setItem("responseAdmin", JSON.stringify(response.data.data));
       router.push("/admin");
     } else {
       form.setError("username", {

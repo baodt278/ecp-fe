@@ -6,14 +6,10 @@
 import Header from "@/components/custom/header";
 import Link from "next/link";
 
-export default function ClientNews() {
+export default function EmpployeeNews() {
   return (
     <div className="flex flex-col w-full min-h-screen">
-      <Header
-        name="Bảng tin"
-        hrefInfo="/client/info"
-        hrefLogin="/client-login"
-      />
+      <Header name="Bảng tin" hrefInfo="/admin/info" hrefLogin="/admin-login" />
       <main className="flex-1 flex flex-col gap-4 p-4 md:gap-8 md:p-6">
         <div className="container space-y-6 px-4 md:px-6">
           <div className="space-y-1">

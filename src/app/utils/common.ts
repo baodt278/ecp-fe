@@ -44,9 +44,9 @@ export function translateType(input: string): string {
     case "PENDING":
       return "Đang chờ";
     case "REVIEWED":
-      return "Đã xem xét";  
+      return "Đã xét duyệt";  
     case "APPROVED":
-      return "Đã duyệt";
+      return "Đã chấp nhận";
     case "REJECTED":
       return "Đã từ chối";  
       
