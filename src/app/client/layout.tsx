@@ -1,7 +1,8 @@
+"use client";
 import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
-import MenuBar from "@/app/client/menubar-client";
-import Header from "@/components/custom/header";
+import MenuBar from "@/app/client/menubar";
+import Header from "@/app/client/header";
 
 const inter = Roboto({
   subsets: ["vietnamese"],
@@ -19,7 +20,10 @@ export default function RootLayout({
       <div className={inter.className}>
         <div className="flex min-h-screen w-full">
           <MenuBar />
-          {children}
+            <div className="flex flex-col w-full min-h-screen">
+                <Header hrefInfo="/client/info" hrefLogin="/client-login" />
+                {children}
+            </div>
         </div>
       </div>
     </html>

@@ -7,31 +7,31 @@ import {
   DropdownMenu,
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
-import Image from "next/image";
+import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
 
 interface HeaderProps {
-  name: string;
   hrefInfo: string;
   hrefLogin: string;
 }
 
-export default function Header({ name, hrefInfo, hrefLogin }: HeaderProps) {
+export default function Header({ hrefInfo, hrefLogin }: HeaderProps) {
+  // @ts-ignore
+  const avatar = JSON.parse(localStorage.getItem("client")).avatar;
   const router = useRouter();
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
       <div className="flex-1">
-        <h1 className="font-semibold text-lg">{name}</h1>
+        <h1 className="font-semibold text-lg"></h1>
       </div>
       <div className="flex items-center gap-4 md:gap-2 lg:gap-4">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button className="rounded-full" size="icon" variant="ghost">
-              <Image
-                src="/public/images/icon.png"
-                width={500}
-                height={500}
-                alt="Picture of the author"
-              />
+              <Avatar>
+                <AvatarImage src={avatar} alt="Ảnh" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -48,7 +48,7 @@ export default function Header({ name, hrefInfo, hrefLogin }: HeaderProps) {
                 size="sm"
                 variant="ghost"
                 onClick={() => {
-                  localStorage.clear;
+                  localStorage.removeItem('client');
                   router.push(hrefLogin);
                 }}>
                 Đăng xuất

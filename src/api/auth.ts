@@ -35,3 +35,10 @@ export const registerClient = (values: z.infer<typeof RegisterBody>) => {
     data: values,
   });
 };
+
+export const forgotPassword = (email: string, type: string) => {
+  return axios({
+    method: "POST",
+    url: BASE_URL + "/forgot-password?email=" + email + "&type=" + type,
+  });
+}
