@@ -62,14 +62,12 @@ export default function ClientBill() {
     const [bills, setBills] = useState([]);
     const currentDate = new Date().toISOString().slice(0, 10);
     const [date, setDate] = useState("");
-
+    const username = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).username : "";
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
     });
 
     const getData = async (date: string) => {
-        // @ts-ignore
-        const username = JSON.parse(localStorage.getItem("client")).username;
         const response = await getContracts(username);
         if (response.data.code == 200) {
             setContracts(response.data.data);

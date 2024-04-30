@@ -16,7 +16,7 @@ interface HeaderProps {
 
 export default function Header({ hrefInfo, hrefLogin }: HeaderProps) {
   // @ts-ignore
-  const avatar = JSON.parse(localStorage.getItem("client")).avatar;
+  const avatar = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).avatar : "";
   const router = useRouter();
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">

@@ -8,7 +8,7 @@ import {convertContentByLine, convertToShortContent} from "@/utils/common";
 import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
 
 export default function Component() {
-    const username = JSON.parse(localStorage.getItem("client")).username;
+    const username = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).username : "";
     const [global, setGlobal] = useState([]);
     const [local, setLocal] = useState([]);
     const [selectNews, setSelectNews] = useState([]);

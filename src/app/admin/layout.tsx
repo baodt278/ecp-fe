@@ -3,6 +3,7 @@ import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import MenuBar from "@/app/admin/menubar"
 import Header from "@/app/admin/header";
+import {useEffect} from "react";
 
 const inter = Roboto({
   subsets: ["vietnamese"],
@@ -14,6 +15,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    useEffect(() => {
+        if (!localStorage.getItem("admin")) {
+            window.location.href = "/admin-login";
+        }
+    }, []);
   return (
     <html lang="en">
       <Toaster />

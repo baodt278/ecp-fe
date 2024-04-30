@@ -50,8 +50,8 @@ export default function ManagerRequest() {
     const [images, setImages] = useState([]);
     const [text, setText] = useState("");
     const [type, setType] = useState("");
-    const username = JSON.parse(localStorage.getItem("employee")).username;
-    const acronym = JSON.parse(localStorage.getItem("employee")).acronymCompany;
+    const username = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).username : "";
+    const acronym = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).acronymCompany : "";
     const [showInput, setShowInput] = useState(false);
     const [inputs, setInputs] = useState([]);
 
@@ -76,6 +76,9 @@ export default function ManagerRequest() {
     };
 
     useEffect(() => {
+        if (localStorage.getItem("employee").role !== ("MANAGER")) {
+            window.location.href = "/employee";
+        }
         getData();
     }, []);
 

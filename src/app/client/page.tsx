@@ -70,9 +70,9 @@ export default function ClientElectric() {
     const [loading, setLoading] = useState(false);
     const [date, setDate] = useState("");
     // @ts-ignore
-    const active = JSON.parse(localStorage.getItem("client")).active;
+    const active = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).active : "";
     // @ts-ignore
-    const username = JSON.parse(localStorage.getItem("client")).username;
+    const username = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).username : "";
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),

@@ -13,8 +13,8 @@ import {Textarea} from "@/components/ui/textarea";
 import {toast} from "@/components/ui/use-toast";
 
 export default function Component() {
-    const username = JSON.parse(localStorage.getItem("employee")).username;
-    const acronym = JSON.parse(localStorage.getItem("employee")).acronymCompany;
+    const username = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).username : "";
+    const acronym = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).acronymCompany : "";
     const [global, setGlobal] = useState([]);
     const [local, setLocal] = useState([]);
     const [selectNews, setSelectNews] = useState([]);

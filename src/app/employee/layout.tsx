@@ -1,7 +1,9 @@
+"use client";
 import { Roboto } from "next/font/google";
 import { Toaster } from "@/components/ui/toaster";
 import MenuBar from "@/app/employee/menubar";
 import Header from "@/app/employee/header";
+import {useEffect} from "react";
 
 const inter = Roboto({
   subsets: ["vietnamese"],
@@ -13,6 +15,11 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    useEffect(() => {
+        if (!localStorage.getItem("employee")) {
+            window.location.href = "/employee-login";
+        }
+    }, []);
     return (
         <html lang="en">
         <Toaster />

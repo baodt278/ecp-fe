@@ -49,7 +49,7 @@ export default function CompanyPage() {
     const [phone, setPhone] = useState("");
     const [loading, setLoading] = useState(false);
     // @ts-ignore
-    const user = JSON.parse(localStorage.getItem("employee"));
+    const user = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")) : "";
 
 
     const roles = [

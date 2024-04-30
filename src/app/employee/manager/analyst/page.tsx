@@ -24,13 +24,12 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {formatNumber} from "@/utils/common";
 import {ResponsiveBar} from "@nivo/bar";
-import {Badge} from "@/components/ui/badge";
 
 export default function Dashboard() {
     const [data, setData] = useState([]);
     const [date, setDate] = useState("");
     // @ts-ignore
-    const acronym = JSON.parse(localStorage.getItem('employee')).acronymCompany;
+    const acronym = JSON.parse(localStorage.getItem('employee')) ? JSON.parse(localStorage.getItem('employee')).acronymCompany : "";
     const currentDate = new Date().toISOString().slice(0, 10);
 
     const getData = async (date: string) => {
@@ -42,6 +41,9 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
+        if (localStorage.getItem("employee").role !== ("MANAGER")) {
+            window.location.href = "/employee";
+        }
         getData(currentDate);
     }, []);
 

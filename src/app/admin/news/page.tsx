@@ -4,7 +4,7 @@ import {Tabs, TabsContent, TabsTrigger, TabsList} from "@/components/ui/tabs";
 import {Card} from "@/components/ui/card";
 import {useEffect, useState} from "react";
 import {createNews, deleteNews, getLocalNews, getSystemNews} from "@/api/admin";
-import {convertContentByLine, convertToShortContent} from "@/utils/common";
+import {convertToShortContent} from "@/utils/common";
 import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {Label} from "@/components/ui/label";
@@ -13,7 +13,7 @@ import {Textarea} from "@/components/ui/textarea";
 import {toast} from "@/components/ui/use-toast";
 
 export default function Component() {
-    const username = JSON.parse(localStorage.getItem("admin")).username;
+    const username = localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")).username : "";
     const [global, setGlobal] = useState([]);
     const [local, setLocal] = useState([]);
     const [selectNews, setSelectNews] = useState([]);

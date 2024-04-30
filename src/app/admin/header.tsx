@@ -8,6 +8,7 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import {Avatar, AvatarFallback, AvatarImage} from "@/components/ui/avatar";
+import {useEffect} from "react";
 
 interface HeaderProps {
   hrefInfo: string;
@@ -16,8 +17,9 @@ interface HeaderProps {
 
 export default function Header({ hrefInfo, hrefLogin }: HeaderProps) {
   // @ts-ignore
-  const avatar = JSON.parse(localStorage.getItem("admin")).avatar;
+  const avatar = localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")).avatar : "";
   const router = useRouter();
+
   return (
     <header className="flex h-14 items-center gap-4 border-b bg-gray-100/40 px-6 dark:bg-gray-800/40">
       <div className="flex-1">

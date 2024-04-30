@@ -28,9 +28,7 @@ export default function Account({loading, setLoading, username}: {
     const [open, setOpen] = useState(false);
     const [image, setImage] = useState(null);
     // @ts-ignore
-    const active = JSON.parse(localStorage.getItem("client")).active;
-    // @ts-ignore
-    const avatar = JSON.parse(localStorage.getItem("client")).avatar;
+    const active = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).active : "";
 
     const getAccount = async () => {
         const response = getInfo(username).then((res) => {

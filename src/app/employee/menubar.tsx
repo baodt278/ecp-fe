@@ -5,7 +5,7 @@ import {useState} from "react";
 
 export default function MenuBar() {
     // @ts-ignore
-    const role = JSON.parse(localStorage.getItem("employee")).role
+    const role = localStorage.getItem("employee") ? JSON.parse(localStorage.getItem("employee")).role : "";
     const [isActive, setIsActive] = useState(0);
     const off = "flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50";
     const on = "flex items-center gap-3 rounded-lg px-3 py-2 text-blue-500 transition-all hover:text-blue-900 dark:text-blue-400 dark:hover:text-blue-50";

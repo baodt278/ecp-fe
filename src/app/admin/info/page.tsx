@@ -7,7 +7,7 @@ import {useState} from "react";
 export default function AdminInfo() {
     const [loading, setLoading] = useState(false);
     // @ts-ignore
-    const username = JSON.parse(localStorage.getItem("admin")).username;
+    const username = localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")).username : "";
     return (
         <>
             <Tabs defaultValue="account" className="w-full">

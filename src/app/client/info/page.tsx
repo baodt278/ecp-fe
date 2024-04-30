@@ -9,7 +9,7 @@ import Account from "@/app/client/info/account";
 export default function ClientInfo() {
     const [loading, setLoading] = useState(false);
     // @ts-ignore
-    const username = JSON.parse(localStorage.getItem("client")).username;
+    const username = localStorage.getItem("client") ? JSON.parse(localStorage.getItem("client")).username : "";
     return (
         <>
             <main className="flex-1 flex flex-col gap-4 p-4 md:gap-8 md:p-6">

@@ -26,9 +26,7 @@ export default function Account({loading, setLoading, username}: {
     const [open, setOpen] = useState(false);
     const [image, setImage] = useState(null);
     // @ts-ignore
-    const avatar = JSON.parse(localStorage.getItem("admin")).avatar;
-    // @ts-ignore
-    const role = JSON.parse(localStorage.getItem("admin")).role;
+    const role = localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")).role : [""];
 
     const getAccount = async () => {
         const response = getInfo(username).then((res) => {

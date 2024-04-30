@@ -10,7 +10,7 @@ import {
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {createBill, createRecord, getContractInfo, payBill} from "@/api/employee";
 import {toast} from "@/components/ui/use-toast";
 import {LoadingButton} from "@/components/ui/loading-button";
@@ -106,6 +106,12 @@ export default function EmployeeCreate() {
         }
         setLoading4(false);
     }
+
+    useEffect(() => {
+        if (localStorage.getItem("employee").role !== ("STAFF")) {
+            window.location.href = "/employee";
+        }
+    }, []);
 
     return (
         <>

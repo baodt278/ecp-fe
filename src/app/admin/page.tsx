@@ -39,7 +39,7 @@ import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {toast} from "@/components/ui/use-toast";
 
 export default function AdminPage() {
-    const [username, setUsername] = useState("");
+    const username = localStorage.getItem("admin") ? JSON.parse(localStorage.getItem("admin")).username : "";
     const [isCompanyDialogOpen, setIsCompanyDialogOpen] = useState(false);
     const [isEmployeeDialogOpen, setIsEmployeeDialogOpen] = useState(false);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -65,8 +65,6 @@ export default function AdminPage() {
     ];
 
     const getData = async () => {
-        const username = await JSON.parse(localStorage.getItem("admin")).username;
-        setUsername(username);
         const response = await getCompanies();
         if (response.data.code == 200) {
             setCompanies(response.data.data);

@@ -31,13 +31,13 @@ export default function EmployeeRequest() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDialogOpen2, setIsDialogOpen2] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState([]);
-    const username = JSON.parse(localStorage.getItem("employee")).username;
+    const username = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).username : "";
+    const acrnoym = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).acronymCompany : "";
     const [requests, setRequests] = useState([]);
     const [images, setImages] = useState([]);
     const [text, setText] = useState("");
     const [type, setType] = useState("");
     const getData = async () => {
-        const acrnoym = await JSON.parse(localStorage.getItem("employee")).acronymCompany;
         const response = await getRequestsForStaff(acrnoym);
         if (response.data.code == 200) {
             setRequests(response.data.data);
@@ -45,6 +45,9 @@ export default function EmployeeRequest() {
     };
 
     useEffect(() => {
+        if (localStorage.getItem("employee").role !== ("STAFF")) {
+            window.location.href = "/employee";
+        }
         getData();
     }, []);
 
