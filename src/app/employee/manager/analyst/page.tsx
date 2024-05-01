@@ -41,7 +41,7 @@ export default function Dashboard() {
     }
 
     useEffect(() => {
-        if (localStorage.getItem("employee").role !== ("MANAGER")) {
+        if (JSON.parse(localStorage.getItem("employee")).role !== "MANAGER") {
             window.location.href = "/employee";
         }
         getData(currentDate);

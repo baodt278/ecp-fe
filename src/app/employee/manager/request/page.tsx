@@ -76,7 +76,7 @@ export default function ManagerRequest() {
     };
 
     useEffect(() => {
-        if (localStorage.getItem("employee").role !== ("MANAGER")) {
+        if (JSON.parse(localStorage.getItem("employee")).role !== "MANAGER") {
             window.location.href = "/employee";
         }
         getData();
@@ -110,6 +110,7 @@ export default function ManagerRequest() {
             });
         }
         setIsDialogOpen2(false);
+        setInputs([]);
         getData();
     };
 
@@ -314,7 +315,7 @@ export default function ManagerRequest() {
                                                     onChange={(e) => setText(e.target.value)}
                                                 />
                                             </div>
-                                            {selectedRequest.type.includes("CONTRACT_") && (
+                                            {(selectedRequest.type.includes("CONTRACT_") && type === "APPROVED") && (
                                                 <>
                                                     <div className="flex items-center space-x-2">
                                                         <Checkbox id="create-charge"

@@ -108,7 +108,7 @@ export default function EmployeeCreate() {
     }
 
     useEffect(() => {
-        if (localStorage.getItem("employee").role !== ("STAFF")) {
+        if (JSON.parse(localStorage.getItem("employee")).role !== "STAFF") {
             window.location.href = "/employee";
         }
     }, []);

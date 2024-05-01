@@ -1,39 +1,67 @@
 
-import Link from "next/link";
-
-export default function Page() {
+import Link from "next/link"
+import { Zap } from 'lucide-react';
+export default function Component() {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 xl:py-40">
-      <div className="container flex flex-col items-center justify-center gap-4 px-4 text-center md:px-6">
-        <div className="space-y-3">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-            QUẢN LÝ ĐIỆN
-          </h1>
-          <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-            Dịch vụ quản lý điện tiện ích chuyên nghiệp, đảm bảo hiệu suất và
-            tiết kiệm năng lượng cho hệ thống.
-          </p>
-        </div>
-        <div className="flex flex-col">
-          <div className="flex flex-row">
-            <Link
-                className="inline-flex h-10 items-center justify-center rounded-md border border-gray-200 border-gray-200 bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-950 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300 mr-4"
-                href="/client-register">
-              Tạo tài khoản
-            </Link>
-            <Link
-                className="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300 mb-4"
-                href="/client-login">
-              Đăng nhập
-            </Link>
+      <>
+        <header className="w-full bg-white py-4 px-6 md:px-12 lg:px-20 shadow">
+          <div className="container mx-auto flex items-center justify-between">
+            <div className="flex items-center">
+              <Zap className="h-6 w-6 text-blue-500" />
+              <span className="ml-2 text-2xl font-bold text-gray-900">Quản lý điện</span>
+            </div>
+            <div className="flex items-center space-x-4">
+              <Link className="text-sm font-medium text-gray-600 hover:text-gray-900" href="/admin-login">
+                Quản trị viên
+              </Link>
+              <Link className="text-sm font-medium text-gray-600 hover:text-gray-900" href="/employee-login">
+                Nhân viên
+              </Link>
+            </div>
           </div>
-          <div>
-            <Link href="#">Đã có tài khoản là </Link>
-            <Link href="/admin-login" className="underline mr-2">Quản trị hệ thống?</Link>
-            <Link href="/employee-login" className="underline">Nhân viên?</Link>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
+        </header>
+        <main>
+          <section className=" py-20 px-6 md:px-12 lg:px-20">
+            <div className="container mx-auto grid grid-cols-1 gap-8 md:grid-cols-2">
+              <div className="flex flex-col items-start justify-center">
+                <h1 className="text-3xl font-bold text-gray-900 md:text-4xl lg:text-5xl">
+                  Quản lý điện năng tiêu thụ
+                </h1>
+                <p className="mt-4 text-lg text-gray-600">
+                  Dịch vụ quản lý điện tiện ích chuyên nghiệp, đảm bảo hiệu suất và
+                  tiết kiệm năng lượng cho hệ thống.
+                </p>
+                <div className="mt-8 flex space-x-4">
+                  <Link
+                      className="rounded-md bg-blue-500 px-6 py-3 text-sm font-medium text-white hover:bg-blue-600"
+                      href="/client-register"
+                  >
+                    Tạo tài khoản
+                  </Link>
+                  <Link
+                      className="rounded-md border border-blue-500 px-6 py-3 text-sm font-medium text-blue-500 hover:bg-blue-500 hover:text-white"
+                      href="/client-login"
+                  >
+                    Đăng nhập
+                  </Link>
+                </div>
+              </div>
+              <div className="flex items-center justify-center">
+                <img
+                    alt="Hero Image"
+                    className="rounded-lg"
+                    height={500}
+                    src="/energy.jpg"
+                    style={{
+                      aspectRatio: "500/500",
+                      objectFit: "cover",
+                    }}
+                    width={500}
+                />
+              </div>
+            </div>
+          </section>
+        </main>
+      </>
+  )
 }
