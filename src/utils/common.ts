@@ -69,6 +69,8 @@ export function translateType(input: string): any {
             return "Tư vấn";
         case "QUESTION":
             return "Hỏi đáp";
+        case "PAYMENT":
+            return "Thanh toán";
 
         // roles
         case "ADMIN":
@@ -120,32 +122,29 @@ export function convertString(input: string): string {
     const str = input.split("|");
     const result: string[] = [];
 
-    if (str.length !== 6) {
-        throw new Error(
-            "Invalid input format. Input must contain exactly 6 parts separated by '|'."
-        );
+    if (str.length === 6) {
+        if (str[0].trim() !== "") {
+            result.push("Tên hợp đồng: " + str[0].trim());
+        }
+        if (str[1].trim() !== "") {
+            result.push("Địa chỉ: " + str[1].trim());
+        }
+        if (str[2].trim() !== "") {
+            result.push("Số hộ: " + str[2].trim());
+        }
+        if (str[3].trim() !== "") {
+            result.push("Loại hợp đồng: " + translateType(str[3].trim()));
+        }
+        if (str[5].trim() !== "") {
+            result.push("Điện áp: " + translateType(str[5].trim()));
+        }
+        if (str[4].trim() !== "") {
+            result.push("Tình trạng: " + translateType(str[4].trim()));
+        }
+        input = result.join('\n');
     }
 
-    if (str[0].trim() !== "") {
-        result.push("Tên hợp đồng: " + str[0].trim());
-    }
-    if (str[1].trim() !== "") {
-        result.push("Địa chỉ: " + str[1].trim());
-    }
-    if (str[2].trim() !== "") {
-        result.push("Số hộ: " + str[2].trim());
-    }
-    if (str[3].trim() !== "") {
-        result.push("Loại hợp đồng: " + translateType(str[3].trim()));
-    }
-    if (str[5].trim() !== "") {
-        result.push("Điện áp: " + translateType(str[5].trim()));
-    }
-    if (str[4].trim() !== "") {
-        result.push("Tình trạng: " + translateType(str[4].trim()));
-    }
-
-    return result.join('\n');
+    return input
 }
 
 export const convertToShortContent = (content: string, length: number): string => {

@@ -191,3 +191,28 @@ export const getLocalNews = (username: string) => {
         url: BASE_URL + "/news/local?username=" + username,
     });
 }
+
+export const payment = (username: string, data: any) => {
+    return axios({
+        method: "POST",
+        url: BASE_URL + "/payment?username=" + username,
+        data: data,
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+}
+
+export const getCharge = (username: string) => {
+    return axios({
+        method: "GET",
+        url: BASE_URL + "/charge?username=" + username,
+    });
+}
+
+export const getMessages = () => {
+    return axios({
+        method: "GET",
+        url: BASE_URL + "/message",
+    });
+}
