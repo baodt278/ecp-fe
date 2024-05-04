@@ -208,3 +208,10 @@ export const deleteNews = (code: string) => {
         url: BASE_URL + "/news/delete?code=" + code,
     });
 }
+
+export const getRequestGeneral = () => {
+    return axios({
+        method: "GET",
+        url: BASE_URL + "/request",
+    });
+}

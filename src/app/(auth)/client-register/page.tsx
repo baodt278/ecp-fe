@@ -41,12 +41,13 @@ export default function ClienRegister() {
     });
 
     async function onSubmit(values: z.infer<typeof RegisterBody>) {
+        setLoading(true);
         const response = await registerClient(values);
         if (response.data.code === 200) {
             toast({
                 variant: "default",
-                title: "Tạo tài khoản thành công",
-                description: "Vui lòng đăng nhập để tiếp tục!",
+                title: "Thành công",
+                description: response.data.data,
             });
             router.push("/client-login");
         } else {
@@ -66,7 +67,13 @@ export default function ClienRegister() {
                 type: "manual",
                 message: "",
             });
+            toast({
+                variant: "destructive",
+                title: "Có lỗi xảy ra",
+                description: response.data.data,
+            });
         }
+        setLoading(false);
     }
 
     return (

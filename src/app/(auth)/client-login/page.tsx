@@ -61,8 +61,8 @@ export default function ClienLogin() {
                 title: "Đăng nhập thất bại",
                 description: response.data.data,
             });
-            setLoading(false);
         }
+        setLoading(false);
     }
 
     return (

@@ -58,8 +58,8 @@ export default function AdminLogin() {
                 title: "Đăng nhập thất bại",
                 description: response.data.data,
             });
-            setLoading(false);
         }
+        setLoading(false);
     }
 
     return (

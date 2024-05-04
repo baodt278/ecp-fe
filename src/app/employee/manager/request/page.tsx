@@ -37,8 +37,6 @@ import {
 import {Plus} from 'lucide-react';
 import {Checkbox} from "@/components/ui/checkbox";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import Account from "@/app/employee/info/account";
-import ChangePassword from "@/app/employee/info/password";
 import {Badge} from "@/components/ui/badge";
 
 export default function ManagerRequest() {
@@ -47,6 +45,8 @@ export default function ManagerRequest() {
     const [selectedRequest, setSelectedRequest] = useState([]);
     const [requests, setRequests] = useState([]);
     const [general, setGeneral] = useState([]);
+    const [display, setDisplay] = useState(false);
+
     const [images, setImages] = useState([]);
     const [text, setText] = useState("");
     const [type, setType] = useState("");
@@ -87,6 +87,7 @@ export default function ManagerRequest() {
         setImages(request.imageUrls);
         setIsDialogOpen(true);
     };
+
 
     const handleUpdateRequest = async () => {
         const data = {
@@ -155,7 +156,10 @@ export default function ManagerRequest() {
                                     {requests.map((request) => (
                                         <TableRow
                                             key={request.code}
-                                            onClick={() => handleRowClick(request)}>
+                                            onClick={() => {
+                                                setDisplay(true);
+                                                handleRowClick(request);
+                                            }}>
                                             <TableCell>{request.code}</TableCell>
                                             <TableCell>{translateType(request.type)}</TableCell>
                                             <TableCell>{request.usernameClient}</TableCell>
@@ -167,127 +171,6 @@ export default function ManagerRequest() {
                                     ))}
                                 </TableBody>
                             </Table>
-                            {isDialogOpen && (
-                                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                    <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
-                                        <DialogHeader>
-                                            <DialogTitle>Chi tiết yêu cầu</DialogTitle>
-                                            <DialogDescription>
-                                                Xét duyệt yêu cầu của người dùng.
-                                            </DialogDescription>
-                                        </DialogHeader>
-                                        <div className="grid gap-4 py-4">
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Mã</Label>
-                                                <Input
-                                                    disabled
-                                                    defaultValue={selectedRequest.code}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Người yêu cầu</Label>
-                                                <Input
-                                                    disabled
-                                                    defaultValue={selectedRequest.usernameClient}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Loại yêu cầu</Label>
-                                                <Input
-                                                    disabled
-                                                    defaultValue={translateType(selectedRequest.type)}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Ngày tạo</Label>
-                                                <Input
-                                                    disabled
-                                                    defaultValue={selectedRequest.createdAt}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Mô tả</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={selectedRequest.description}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Thông tin</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={convertString(selectedRequest.info)}
-                                                    className="col-span-3 col-span-3 h-[120px]"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center">
-                                                <Label htmlFor="picture" className="text-left">
-                                                    Ảnh
-                                                </Label>
-                                                {images != null &&
-                                                    images.map((image) => (
-                                                        <Image
-                                                            className="flex flex-end px-1"
-                                                            key={image}
-                                                            src={image}
-                                                            width={500}
-                                                            height={500}
-                                                            alt="Picture of the author"
-                                                        />
-                                                    ))
-                                                }
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Xét duyệt bởi</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={selectedRequest.reviewedBy}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Ngày xét duyệt</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={selectedRequest.reviewedAt}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Phản hồi</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={selectedRequest.reviewText}
-                                                    className="col-span-3"
-                                                />
-                                            </div>
-                                        </div>
-                                        <DialogFooter>
-                                            <div className="flex justify-end gap-2">
-                                                <Button variant="destructive" onClick={() => {
-                                                    setIsDialogOpen(false);
-                                                    setIsDialogOpen2(true);
-                                                    setType("REJECTED");
-                                                }}>
-                                                    Từ chối
-                                                </Button>
-                                                <Button variant="default" onClick={() => {
-                                                    setIsDialogOpen(false);
-                                                    setIsDialogOpen2(true);
-                                                    setType("APPROVED");
-                                                }}>
-                                                    Chấp nhận
-                                                </Button>
-                                            </div>
-                                        </DialogFooter>
-                                    </DialogContent>
-                                </Dialog>
-                            )}
                             {isDialogOpen2 && (
                                 <Dialog open={isDialogOpen2} onOpenChange={setIsDialogOpen2}>
                                     <DialogContent
@@ -375,7 +258,10 @@ export default function ManagerRequest() {
                                 <TableBody>
                                     {general.map((request) => (
                                         <TableRow
-                                            key={request.code}>
+                                            key={request.code} onClick={() => {
+                                            setDisplay(false);
+                                            handleRowClick(request);
+                                        }}>
                                             <TableCell>{request.code}</TableCell>
                                             <TableCell>{translateType(request.type)}</TableCell>
                                             <TableCell>{request.usernameClient}</TableCell>
@@ -393,6 +279,154 @@ export default function ManagerRequest() {
                     </Card>
                 </TabsContent>
             </Tabs>
+            {isDialogOpen && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{display ? "Phê duyệt yêu cầu" : "Chỉ tiết yêu cầu"}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Mã</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.code}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Người yêu cầu</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.usernameClient}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Loại yêu cầu</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={translateType(selectedRequest.type)}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Ngày tạo</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.createdAt}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Mô tả</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={selectedRequest.description}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Thông tin</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={convertString(selectedRequest.info)}
+                                    className="col-span-3 col-span-3 h-[120px]"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center">
+                                <Label htmlFor="picture" className="text-left">
+                                    Ảnh
+                                </Label>
+                                {images != null &&
+                                    images.map((image) => (
+                                        <Image
+                                            className="flex flex-end px-1"
+                                            key={image}
+                                            src={image}
+                                            width={500}
+                                            height={500}
+                                            alt="Picture of the author"
+                                        />
+                                    ))
+                                }
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Xét duyệt bởi</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={selectedRequest.reviewedBy}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Ngày xét duyệt</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={selectedRequest.reviewedAt}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Phản hồi</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={selectedRequest.reviewText}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            {selectedRequest.acceptedBy != null && (
+                                <>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-left">Phê duyệt bởi</Label>
+                                        <Textarea
+                                            disabled
+                                            defaultValue={selectedRequest.acceptedBy}
+                                            className="col-span-3"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-left">Ngày phê duyệt</Label>
+                                        <Textarea
+                                            disabled
+                                            defaultValue={selectedRequest.acceptedAt}
+                                            className="col-span-3"
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-left">Phản hồi</Label>
+                                        <Textarea
+                                            disabled
+                                            defaultValue={selectedRequest.acceptText}
+                                            className="col-span-3"
+                                        />
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                        {display && (
+                            <DialogFooter>
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="destructive" onClick={() => {
+                                        setIsDialogOpen(false);
+                                        setIsDialogOpen2(true);
+                                        setType("REJECTED");
+                                    }}>
+                                        Từ chối
+                                    </Button>
+                                    <Button variant="default" onClick={() => {
+                                        setIsDialogOpen(false);
+                                        setIsDialogOpen2(true);
+                                        setType("APPROVED");
+                                    }}>
+                                        Chấp nhận
+                                    </Button>
+                                </div>
+                            </DialogFooter>
+                        )}
+                    </DialogContent>
+                </Dialog>
+            )}
         </>
     );
 }

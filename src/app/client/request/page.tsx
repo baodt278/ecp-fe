@@ -33,6 +33,8 @@ import Image from "next/image";
 import {toast} from "@/components/ui/use-toast";
 import CreateRequest from "./create-request";
 import {Badge} from "@/components/ui/badge";
+import {getRequestGeneral} from "@/api/client";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 
 export default function ClientRequest() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -42,6 +44,8 @@ export default function ClientRequest() {
     const [images, setImages] = useState([]);
     const [description, setDescription] = useState("");
     const [imageUrls, setImageUrls] = useState([]);
+    const [general, setGeneral] = useState([]);
+    const [display, setDisplay] = useState(false);
 
     const getData = async () => {
         const username = JSON.parse(localStorage.getItem("client")).username;
@@ -49,6 +53,10 @@ export default function ClientRequest() {
         const response = await getRequests(username);
         if (response.data.code == 200) {
             setRequests(response.data.data);
+        }
+        const response2 = await getRequestGeneral(username);
+        if (response.data.code == 200) {
+            setGeneral(response2.data.data);
         }
     };
 
@@ -125,229 +133,273 @@ export default function ClientRequest() {
     return (
         <>
             <main className="flex-1 flex flex-col gap-4 p-4 md:gap-8 md:p-6">
-                <Card>
-                    <CardHeader>
-                        <div className="flex items-center justify-between">
-                            <CardTitle>Yêu cầu</CardTitle>
-                            <CreateRequest onCreateRequest={() => getData()}/>
-                        </div>
-                    </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Mã</TableHead>
-                                    <TableHead>Mã công ty</TableHead>
-                                    <TableHead>Loại yêu cầu</TableHead>
-                                    <TableHead>Ngày yêu cầu</TableHead>
-                                    <TableHead>Ngày xét duyệt</TableHead>
-                                    <TableHead>Ngày duyệt</TableHead>
-                                    <TableHead>Trạng thái</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {requests.map((request) => (
-                                    <TableRow
-                                        key={request.code}
-                                        onClick={() => handleRowClick(request)}>
-                                        <TableCell>{request.code}</TableCell>
-                                        <TableCell>{request.companyAcronym}</TableCell>
-                                        <TableCell>{translateType(request.type)}</TableCell>
-                                        <TableCell>{request.createdAt}</TableCell>
-                                        <TableCell>{request.reviewedAt}</TableCell>
-                                        <TableCell>{request.acceptedAt}</TableCell>
-                                        <TableCell>{switchBadge(request.status)}</TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                        {isDialogOpen && (
-                            <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                                <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
-                                    <DialogHeader>
-                                        <DialogTitle>Chi tiết yêu cầu</DialogTitle>
-                                        <DialogDescription>
-                                            Khi yêu cầu ở trạng thái &quot;Đang chờ&quot;, bạn có thể
-                                            thay đổi mô tả và hình ảnh liên quan. Đối với các yêu cầu
-                                            liên quan đến hợp đồng thì không thể thay đổi thông tin.
-                                        </DialogDescription>
-                                    </DialogHeader>
-                                    <div className="grid gap-4 py-4">
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Mã</Label>
-                                            <Input
-                                                disabled
-                                                defaultValue={selectedRequest.code}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Mã công ty</Label>
-                                            <Input
-                                                disabled
-                                                defaultValue={selectedRequest.companyAcronym}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Loại yêu cầu</Label>
-                                            <Input
-                                                disabled
-                                                defaultValue={translateType(selectedRequest.type)}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Trạng thái</Label>
-                                            <Input
-                                                disabled
-                                                defaultValue={translateType(selectedRequest.status)}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Ngày tạo</Label>
-                                            <Input
-                                                disabled
-                                                defaultValue={selectedRequest.createdAt}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-4 items-center gap-4">
-                                            <Label className="text-left">Mô tả</Label>
-                                            <Textarea
-                                                disabled={selectedRequest.status !== "PENDING"}
-                                                defaultValue={selectedRequest.description}
-                                                onChange={(e) => setDescription(e.target.value)}
-                                                className="col-span-3"
-                                            />
-                                        </div>
-                                        {selectedRequest.type.includes("CONTRACT_") && (
-                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                <Label className="text-left">Thông tin</Label>
-                                                <Textarea
-                                                    disabled
-                                                    defaultValue={convertString(selectedRequest.info)}
-                                                    className="col-span-3 h-[120px]"
-                                                />
-                                            </div>
-                                        )}
-                                        <div className="grid grid-cols-4 items-center">
-                                            <Label htmlFor="picture" className="text-left">
-                                                Ảnh
-                                            </Label>
-                                            {images != null &&
-                                                images.map((image) => (
-                                                    <Image
-                                                        className="flex flex-end px-1"
-                                                        key={image}
-                                                        src={image}
-                                                        width={500}
-                                                        height={500}
-                                                        alt="Picture of the author"
-                                                    />
-                                                ))}
+                <Tabs defaultValue="approve" className="w-full">
+                    <TabsList>
+                        <TabsTrigger value="approve">Yêu cầu</TabsTrigger>
+                        <TabsTrigger value="request">Lịch sử</TabsTrigger>
+                    </TabsList>
+                    <TabsContent value="approve">
+                        <Card>
+                            <CardHeader>
+                                <div className="flex items-center justify-between">
+                                    <CardTitle>Yêu cầu</CardTitle>
+                                    <CreateRequest onCreateRequest={() => getData()}/>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Mã</TableHead>
+                                            <TableHead>Mã công ty</TableHead>
+                                            <TableHead>Loại yêu cầu</TableHead>
+                                            <TableHead>Ngày yêu cầu</TableHead>
+                                            <TableHead>Ngày xét duyệt</TableHead>
+                                            <TableHead>Ngày duyệt</TableHead>
+                                            <TableHead>Trạng thái</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {requests.map((request) => (
+                                            <TableRow
+                                                key={request.code}
+                                                onClick={() => handleRowClick(request)}>
+                                                <TableCell>{request.code}</TableCell>
+                                                <TableCell>{request.companyAcronym}</TableCell>
+                                                <TableCell>{translateType(request.type)}</TableCell>
+                                                <TableCell>{request.createdAt}</TableCell>
+                                                <TableCell>{request.reviewedAt}</TableCell>
+                                                <TableCell>{request.acceptedAt}</TableCell>
+                                                <TableCell>{switchBadge(request.status)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                    <TabsContent value="request">
+                        <Card>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Mã</TableHead>
+                                            <TableHead>Loại yêu cầu</TableHead>
+                                            <TableHead>Yêu cầu bởi</TableHead>
+                                            <TableHead>Ngày yêu cầu</TableHead>
+                                            <TableHead>Xét duyệt bởi</TableHead>
+                                            <TableHead>Ngày xét duyệt</TableHead>
+                                            <TableHead>Phê duyệt bởi</TableHead>
+                                            <TableHead>Ngày phê duyệt</TableHead>
+                                            <TableHead>Trạng thái</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {general.map((request) => (
+                                            <TableRow
+                                                key={request.code} onClick={() => {
+                                                setDisplay(false);
+                                                handleRowClick(request);
+                                            }}>
+                                                <TableCell>{request.code}</TableCell>
+                                                <TableCell>{translateType(request.type)}</TableCell>
+                                                <TableCell>{request.usernameClient}</TableCell>
+                                                <TableCell>{request.createdAt}</TableCell>
+                                                <TableCell>{request.reviewedBy}</TableCell>
+                                                <TableCell>{request.reviewedAt}</TableCell>
+                                                <TableCell>{request.acceptedBy}</TableCell>
+                                                <TableCell>{request.acceptedAt}</TableCell>
+                                                <TableCell>{switchBadge(request.status)}</TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+                </Tabs>
 
-                                            {images == null && (
-                                                <Input
-                                                    multiple
-                                                    disabled={selectedRequest.status !== "PENDING"}
-                                                    className="col-span-3"
-                                                    id="picture"
-                                                    type="file"
-                                                    onChange={(e) => {
-                                                        setImageUrls(e.target.files);
-                                                    }}
-                                                />
-                                            )}
-                                        </div>
-                                        {selectedRequest.status !== "PENDING" && (
-                                            <>
-                                                {selectedRequest.type !== "EMERGENCY" &&
-                                                    selectedRequest.type !== "ADVICE" &&
-                                                    selectedRequest.type !== "QUESTION" && (
-                                                        <>
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label className="text-left">
-                                                                    Người xét duyệt
-                                                                </Label>
-                                                                <Input
-                                                                    disabled
-                                                                    defaultValue={selectedRequest.reviewedBy}
-                                                                    className="col-span-3"
-                                                                />
-                                                            </div>
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label className="text-left">
-                                                                    Ngày xét duyệt
-                                                                </Label>
-                                                                <Input
-                                                                    disabled
-                                                                    defaultValue={selectedRequest.reviewedAt}
-                                                                    className="col-span-3"
-                                                                />
-                                                            </div>
-                                                            <div className="grid grid-cols-4 items-center gap-4">
-                                                                <Label className="text-left">Phản hồi</Label>
-                                                                <Textarea
-                                                                    disabled
-                                                                    defaultValue={selectedRequest.reviewText}
-                                                                    className="col-span-3"
-                                                                />
-                                                            </div>
-                                                        </>
-                                                    )}
-                                                {(selectedRequest.status === "APPROVED" || selectedRequest.acceptedAt !== null) && (
-                                                    <>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label className="text-left">Người phê duyệt</Label>
-                                                            <Input
-                                                                disabled
-                                                                defaultValue={selectedRequest.acceptedBy}
-                                                                className="col-span-3"
-                                                            />
-                                                        </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label className="text-left">Ngày phê duyệt</Label>
-                                                            <Input
-                                                                disabled
-                                                                defaultValue={selectedRequest.acceptedAt}
-                                                                className="col-span-3"
-                                                            />
-                                                        </div>
-                                                        <div className="grid grid-cols-4 items-center gap-4">
-                                                            <Label className="text-left">Phản hồi</Label>
-                                                            <Textarea
-                                                                disabled
-                                                                defaultValue={selectedRequest.acceptText}
-                                                                className="col-span-3"
-                                                            />
-                                                        </div>
-                                                    </>
-                                                )}
-                                            </>
-                                        )}
+                {isDialogOpen && (
+                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                        <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
+                            <DialogHeader>
+                                <DialogTitle>Chi tiết yêu cầu</DialogTitle>
+                            </DialogHeader>
+                            <div className="grid gap-4 py-4">
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Mã</Label>
+                                    <Input
+                                        disabled
+                                        defaultValue={selectedRequest.code}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Mã công ty</Label>
+                                    <Input
+                                        disabled
+                                        defaultValue={selectedRequest.companyAcronym}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Loại yêu cầu</Label>
+                                    <Input
+                                        disabled
+                                        defaultValue={translateType(selectedRequest.type)}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Trạng thái</Label>
+                                    <Input
+                                        disabled
+                                        defaultValue={translateType(selectedRequest.status)}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Ngày tạo</Label>
+                                    <Input
+                                        disabled
+                                        defaultValue={selectedRequest.createdAt}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                <div className="grid grid-cols-4 items-center gap-4">
+                                    <Label className="text-left">Mô tả</Label>
+                                    <Textarea
+                                        disabled={selectedRequest.status !== "PENDING"}
+                                        defaultValue={selectedRequest.description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        className="col-span-3"
+                                    />
+                                </div>
+                                {selectedRequest.type.includes("CONTRACT_") && (
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-left">Thông tin</Label>
+                                        <Textarea
+                                            disabled
+                                            defaultValue={convertString(selectedRequest.info)}
+                                            className="col-span-3 h-[120px]"
+                                        />
                                     </div>
-                                    <DialogFooter>
-                                        {selectedRequest.status === "PENDING" && (
+                                )}
+                                <div className="grid grid-cols-4 items-center">
+                                    <Label htmlFor="picture" className="text-left">
+                                        Ảnh
+                                    </Label>
+                                    {images != null &&
+                                        images.map((image) => (
+                                            <Image
+                                                className="flex flex-end px-1"
+                                                key={image}
+                                                src={image}
+                                                width={500}
+                                                height={500}
+                                                alt="Picture of the author"
+                                            />
+                                        ))}
+
+                                    {images == null && (
+                                        <Input
+                                            multiple
+                                            disabled={selectedRequest.status !== "PENDING"}
+                                            className="col-span-3"
+                                            id="picture"
+                                            type="file"
+                                            onChange={(e) => {
+                                                setImageUrls(e.target.files);
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                {selectedRequest.status !== "PENDING" && (
+                                    <>
+                                        {selectedRequest.type !== "EMERGENCY" &&
+                                            selectedRequest.type !== "ADVICE" &&
+                                            selectedRequest.type !== "QUESTION" && (
+                                                <>
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <Label className="text-left">
+                                                            Người xét duyệt
+                                                        </Label>
+                                                        <Input
+                                                            disabled
+                                                            defaultValue={selectedRequest.reviewedBy}
+                                                            className="col-span-3"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <Label className="text-left">
+                                                            Ngày xét duyệt
+                                                        </Label>
+                                                        <Input
+                                                            disabled
+                                                            defaultValue={selectedRequest.reviewedAt}
+                                                            className="col-span-3"
+                                                        />
+                                                    </div>
+                                                    <div className="grid grid-cols-4 items-center gap-4">
+                                                        <Label className="text-left">Phản hồi</Label>
+                                                        <Textarea
+                                                            disabled
+                                                            defaultValue={selectedRequest.reviewText}
+                                                            className="col-span-3"
+                                                        />
+                                                    </div>
+                                                </>
+                                            )}
+                                        {(selectedRequest.status === "APPROVED" || selectedRequest.acceptedAt !== null) && (
                                             <>
-                                                <Button
-                                                    type="submit"
-                                                    variant="destructive"
-                                                    onClick={handleDeleteRequest}>
-                                                    Xoá yêu cầu
-                                                </Button>
-                                                <Button type="submit" onClick={handleUpdateRequest}>
-                                                    Lưu thay đổi
-                                                </Button>
+                                                <div className="grid grid-cols-4 items-center gap-4">
+                                                    <Label className="text-left">Người phê duyệt</Label>
+                                                    <Input
+                                                        disabled
+                                                        defaultValue={selectedRequest.acceptedBy}
+                                                        className="col-span-3"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-4 items-center gap-4">
+                                                    <Label className="text-left">Ngày phê duyệt</Label>
+                                                    <Input
+                                                        disabled
+                                                        defaultValue={selectedRequest.acceptedAt}
+                                                        className="col-span-3"
+                                                    />
+                                                </div>
+                                                <div className="grid grid-cols-4 items-center gap-4">
+                                                    <Label className="text-left">Phản hồi</Label>
+                                                    <Textarea
+                                                        disabled
+                                                        defaultValue={selectedRequest.acceptText}
+                                                        className="col-span-3"
+                                                    />
+                                                </div>
                                             </>
                                         )}
-                                    </DialogFooter>
-                                </DialogContent>
-                            </Dialog>
-                        )}
-                    </CardContent>
-                </Card>
+                                    </>
+                                )}
+                            </div>
+                            <DialogFooter>
+                                {selectedRequest.status === "PENDING" && (
+                                    <>
+                                        <Button
+                                            type="submit"
+                                            variant="destructive"
+                                            onClick={handleDeleteRequest}>
+                                            Xoá yêu cầu
+                                        </Button>
+                                        <Button type="submit" onClick={handleUpdateRequest}>
+                                            Lưu thay đổi
+                                        </Button>
+                                    </>
+                                )}
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
+                )}
             </main>
         </>
     );

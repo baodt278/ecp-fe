@@ -394,14 +394,16 @@ export default function CompanyPage() {
                             </div>
                         </div>
 
-                        <DialogFooter>
-                            <LoadingButton variant="destructive" onClick={() => handleDelete(employee.username)} loading={loading}>
-                                Xóa nhân viên
-                            </LoadingButton>
-                            <LoadingButton onClick={() => handleUpdate(employee)} loading={loading}>
-                                Lưu thay đổi
-                            </LoadingButton>
-                        </DialogFooter>
+                        {user.role === "MANAGER" && (
+                            <DialogFooter>
+                                <LoadingButton variant="destructive" onClick={() => handleDelete(employee.username)} loading={loading}>
+                                    Xóa nhân viên
+                                </LoadingButton>
+                                <LoadingButton onClick={() => handleUpdate(employee)} loading={loading}>
+                                    Lưu thay đổi
+                                </LoadingButton>
+                            </DialogFooter>
+                        )}
                     </DialogContent>
                 </Dialog>
             )}

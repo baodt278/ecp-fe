@@ -216,3 +216,10 @@ export const getMessages = () => {
         url: BASE_URL + "/message",
     });
 }
+
+export const getRequestGeneral = (username: string) => {
+    return axios({
+        method: "GET",
+        url: BASE_URL + "/request?username=" + username,
+    });
+}

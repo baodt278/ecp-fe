@@ -24,23 +24,33 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import Image from "next/image";
 import {toast} from "@/components/ui/use-toast";
-import {getRequestsForStaff, reviewRequest} from "@/api/employee";
+import {getRequestGeneral, getRequestsForStaff, reviewRequest} from "@/api/employee";
 import {Badge} from "@/components/ui/badge";
+import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Plus} from "lucide-react";
 
 export default function EmployeeRequest() {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isDialogOpen2, setIsDialogOpen2] = useState(false);
     const [selectedRequest, setSelectedRequest] = useState([]);
     const username = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).username : "";
-    const acrnoym = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).acronymCompany : "";
+    const acronym = JSON.parse(localStorage.getItem("employee")) ? JSON.parse(localStorage.getItem("employee")).acronymCompany : "";
     const [requests, setRequests] = useState([]);
     const [images, setImages] = useState([]);
+    const [general, setGeneral] = useState([]);
     const [text, setText] = useState("");
     const [type, setType] = useState("");
+    const [display, setDisplay] = useState(false);
+    const [loading, setLoading] = useState(false);
     const getData = async () => {
-        const response = await getRequestsForStaff(acrnoym);
+        const response = await getRequestsForStaff(acronym);
         if (response.data.code == 200) {
             setRequests(response.data.data);
+        }
+        const response2 = await getRequestGeneral(acronym);
+        if (response2.data.code == 200) {
+            setGeneral(response2.data.data);
         }
     };
 
@@ -99,172 +109,275 @@ export default function EmployeeRequest() {
 
     return (
         <>
-            <Card>
-                <CardHeader>
-                    <CardTitle>Xét duyệt yêu cầu</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Mã</TableHead>
-                                <TableHead>Người yêu cầu</TableHead>
-                                <TableHead>Loại yêu cầu</TableHead>
-                                <TableHead>Ngày yêu cầu</TableHead>
-                                <TableHead>Trạng thái</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {requests.map((request) => (
-                                <TableRow
-                                    key={request.code}
-                                    onClick={() => handleRowClick(request)}>
-                                    <TableCell>{request.code}</TableCell>
-                                    <TableCell>{request.usernameClient}</TableCell>
-                                    <TableCell>{translateType(request.type)}</TableCell>
-                                    <TableCell>{request.createdAt}</TableCell>
-                                    <TableCell>{switchBadge(request.status)}</TableCell>
-                                </TableRow>
-                            ))}
-                        </TableBody>
-                    </Table>
-                    {isDialogOpen && (
-                        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                            <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
-                                <DialogHeader>
-                                    <DialogTitle>Chi tiết yêu cầu</DialogTitle>
-                                    <DialogDescription>
-                                        Xét duyệt yêu cầu của người dùng.
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Mã</Label>
-                                        <Input
-                                            disabled
-                                            defaultValue={selectedRequest.code}
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Người yêu cầu</Label>
-                                        <Input
-                                            disabled
-                                            defaultValue={selectedRequest.usernameClient}
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Loại yêu cầu</Label>
-                                        <Input
-                                            disabled
-                                            defaultValue={translateType(selectedRequest.type)}
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Ngày tạo</Label>
-                                        <Input
-                                            disabled
-                                            defaultValue={selectedRequest.createdAt}
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Mô tả</Label>
-                                        <Textarea
-                                            disabled
-                                            defaultValue={selectedRequest.description}
-                                            className="col-span-3"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Thông tin</Label>
-                                        <Textarea
-                                            disabled
-                                            defaultValue={convertString(selectedRequest.info)}
-                                            className="col-span-3 h-[120px]"
-                                        />
-                                    </div>
-                                    <div className="grid grid-cols-4 items-center">
-                                        <Label htmlFor="picture" className="text-left">
-                                            Ảnh
-                                        </Label>
-                                        {images != null &&
-                                            images.map((image) => (
-                                                <Image
-                                                    className="flex flex-end px-1"
-                                                    key={image}
-                                                    src={image}
-                                                    width={500}
-                                                    height={500}
-                                                    alt="Picture of the author"
+            <Tabs defaultValue="review" className="w-full">
+                <TabsList>
+                    <TabsTrigger value="review">Xét duyệt</TabsTrigger>
+                    <TabsTrigger value="request">Lịch sử</TabsTrigger>
+                </TabsList>
+                <TabsContent value="review">
+                    <Card>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Mã</TableHead>
+                                        <TableHead>Người yêu cầu</TableHead>
+                                        <TableHead>Loại yêu cầu</TableHead>
+                                        <TableHead>Ngày yêu cầu</TableHead>
+                                        <TableHead>Trạng thái</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {requests.map((request) => (
+                                        <TableRow
+                                            key={request.code} onClick={() => {
+                                            setDisplay(true);
+                                            handleRowClick(request);
+                                        }}>
+                                            <TableCell>{request.code}</TableCell>
+                                            <TableCell>{request.usernameClient}</TableCell>
+                                            <TableCell>{translateType(request.type)}</TableCell>
+                                            <TableCell>{request.createdAt}</TableCell>
+                                            <TableCell>{switchBadge(request.status)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                            {isDialogOpen2 && (
+                                <Dialog open={isDialogOpen2} onOpenChange={setIsDialogOpen2}>
+                                    <DialogContent
+                                        className="w-1/3 h-1/2 overflow-y-auto">
+                                        <DialogHeader>
+                                            <DialogTitle>Phê duyệt</DialogTitle>
+                                            <DialogDescription>
+                                                Phê duyệt yêu cầu của người dùng.
+                                            </DialogDescription>
+                                        </DialogHeader>
+                                        <div className="grid gap-4 py-4">
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-left">Trạng thái</Label>
+                                                <Input
+                                                    disabled
+                                                    className="col-span-3"
+                                                    value={translateType(type)}
                                                 />
-                                            ))
-                                        }
-                                    </div>
-                                </div>
-                                <DialogFooter>
-                                    <div className="flex justify-end gap-2">
-                                        <Button variant="destructive" onClick={() => {
-                                            setIsDialogOpen(false);
-                                            setIsDialogOpen2(true);
-                                            setType("REJECTED");
+                                            </div>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-left">Phản hồi</Label>
+                                                <Textarea
+                                                    placeholder="Nhập phản hồi"
+                                                    className="col-span-3"
+                                                    onChange={(e) => setText(e.target.value)}
+                                                />
+                                            </div>
+                                            <div className="flex justify-end gap-2">
+                                                <Button variant="outline" onClick={() => {
+                                                    setIsDialogOpen2(false)
+                                                }}>
+                                                    Hủy
+                                                </Button>
+                                                <Button onClick={handleUpdateRequest}>Lưu</Button>
+                                            </div>
+                                        </div>
+                                    </DialogContent>
+                                </Dialog>
+                            )}
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+                <TabsContent value="request">
+                    <Card>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Mã</TableHead>
+                                        <TableHead>Loại yêu cầu</TableHead>
+                                        <TableHead>Yêu cầu bởi</TableHead>
+                                        <TableHead>Ngày yêu cầu</TableHead>
+                                        <TableHead>Xét duyệt bởi</TableHead>
+                                        <TableHead>Ngày xét duyệt</TableHead>
+                                        <TableHead>Phê duyệt bởi</TableHead>
+                                        <TableHead>Ngày phê duyệt</TableHead>
+                                        <TableHead>Trạng thái</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {general.map((request) => (
+                                        <TableRow
+                                            key={request.code} onClick={() => {
+                                            setDisplay(false);
+                                            handleRowClick(request);
                                         }}>
-                                            Từ chối
-                                        </Button>
-                                        <Button variant="default" onClick={() => {
-                                            setIsDialogOpen(false);
-                                            setIsDialogOpen2(true);
-                                            setType("REVIEWED");
-                                        }}>
-                                            Chấp nhận
-                                        </Button>
-                                    </div>
-                                </DialogFooter>
-                            </DialogContent>
-                        </Dialog>
-                    )}
-                    {isDialogOpen2 && (
-                        <Dialog open={isDialogOpen2} onOpenChange={setIsDialogOpen2}>
-                            <DialogContent className="w-1/3 h-1/2 overflow-y-auto">
-                                <DialogHeader>
-                                    <DialogTitle>Xét duyệt</DialogTitle>
-                                    <DialogDescription>
-                                        Xét duyệt yêu cầu của người dùngz
-                                    </DialogDescription>
-                                </DialogHeader>
-                                <div className="grid gap-4 py-4">
+                                            <TableCell>{request.code}</TableCell>
+                                            <TableCell>{translateType(request.type)}</TableCell>
+                                            <TableCell>{request.usernameClient}</TableCell>
+                                            <TableCell>{request.createdAt}</TableCell>
+                                            <TableCell>{request.reviewedBy}</TableCell>
+                                            <TableCell>{request.reviewedAt}</TableCell>
+                                            <TableCell>{request.acceptedBy}</TableCell>
+                                            <TableCell>{request.acceptedAt}</TableCell>
+                                            <TableCell>{switchBadge(request.status)}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                </TabsContent>
+            </Tabs>
+            {isDialogOpen && (
+                <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+                    <DialogContent className="w-2/3 h-2/3 overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>{display ? "Phê duyệt yêu cầu" : "Chỉ tiết yêu cầu"}</DialogTitle>
+                        </DialogHeader>
+                        <div className="grid gap-4 py-4">
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Mã</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.code}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Người yêu cầu</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.usernameClient}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Loại yêu cầu</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={translateType(selectedRequest.type)}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Ngày tạo</Label>
+                                <Input
+                                    disabled
+                                    defaultValue={selectedRequest.createdAt}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Mô tả</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={selectedRequest.description}
+                                    className="col-span-3"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center gap-4">
+                                <Label className="text-left">Thông tin</Label>
+                                <Textarea
+                                    disabled
+                                    defaultValue={convertString(selectedRequest.info)}
+                                    className="col-span-3 col-span-3 h-[120px]"
+                                />
+                            </div>
+                            <div className="grid grid-cols-4 items-center">
+                                <Label htmlFor="picture" className="text-left">
+                                    Ảnh
+                                </Label>
+                                {images != null &&
+                                    images.map((image) => (
+                                        <Image
+                                            className="flex flex-end px-1"
+                                            key={image}
+                                            src={image}
+                                            width={500}
+                                            height={500}
+                                            alt="Picture of the author"
+                                        />
+                                    ))
+                                }
+                            </div>
+                            {!display && (
+                                <>
                                     <div className="grid grid-cols-4 items-center gap-4">
-                                        <Label className="text-left">Trạng thái</Label>
-                                        <Input
+                                        <Label className="text-left">Xét duyệt bởi</Label>
+                                        <Textarea
                                             disabled
+                                            defaultValue={selectedRequest.reviewedBy}
                                             className="col-span-3"
-                                            value={translateType(type)}
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-4 items-center gap-4">
+                                        <Label className="text-left">Ngày xét duyệt</Label>
+                                        <Textarea
+                                            disabled
+                                            defaultValue={selectedRequest.reviewedAt}
+                                            className="col-span-3"
                                         />
                                     </div>
                                     <div className="grid grid-cols-4 items-center gap-4">
                                         <Label className="text-left">Phản hồi</Label>
                                         <Textarea
-                                            placeholder="Nhập phản hồi"
+                                            disabled
+                                            defaultValue={selectedRequest.reviewText}
                                             className="col-span-3"
-                                            onChange={(e) => setText(e.target.value)}
                                         />
                                     </div>
-                                    <div className="flex justify-end gap-2">
-                                        <Button variant="outline" onClick={() => {
-                                            setIsDialogOpen2(false)
-                                        }}>
-                                            Hủy
-                                        </Button>
-                                        <Button onClick={handleUpdateRequest}>Lưu</Button>
-                                    </div>
+                                    {selectedRequest.acceptedBy != null && (
+                                        <>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-left">Phê duyệt bởi</Label>
+                                                <Textarea
+                                                    disabled
+                                                    defaultValue={selectedRequest.acceptedBy}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-left">Ngày phê duyệt</Label>
+                                                <Textarea
+                                                    disabled
+                                                    defaultValue={selectedRequest.acceptedAt}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                            <div className="grid grid-cols-4 items-center gap-4">
+                                                <Label className="text-left">Phản hồi</Label>
+                                                <Textarea
+                                                    disabled
+                                                    defaultValue={selectedRequest.acceptText}
+                                                    className="col-span-3"
+                                                />
+                                            </div>
+                                        </>
+                                    )}
+                                </>
+                            )}
+                        </div>
+                        {display && (
+                            <DialogFooter>
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="destructive" onClick={() => {
+                                        setIsDialogOpen(false);
+                                        setIsDialogOpen2(true);
+                                        setType("REJECTED");
+                                    }}>
+                                        Từ chối
+                                    </Button>
+                                    <Button variant="default" onClick={() => {
+                                        setIsDialogOpen(false);
+                                        setIsDialogOpen2(true);
+                                        setType("REVIEWED");
+                                    }}>
+                                        Chấp nhận
+                                    </Button>
                                 </div>
-                            </DialogContent>
-                        </Dialog>
-                    )}
-                </CardContent>
-            </Card>
+                            </DialogFooter>
+                        )}
+                    </DialogContent>
+                </Dialog>
+            )}
         </>
     );
 }

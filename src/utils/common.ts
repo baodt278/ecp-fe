@@ -66,7 +66,7 @@ export function translateType(input: string): any {
         case "EMERGENCY":
             return "Khẩn cấp";
         case "ADVICE":
-            return "Tư vấn";
+            return "Kiến nghị";
         case "QUESTION":
             return "Hỏi đáp";
         case "PAYMENT":
